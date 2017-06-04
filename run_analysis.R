@@ -160,7 +160,11 @@ run_analysis <- function() {
       summary_of_means <- 
             dplyr::summarise(gfinal_table, 
                              mean_value = mean(measurement_value))
-
+      
+      ## sort the previous table by subject, act_name, measumrement_type
+      summary_of_means <- arrange(summary_of_means, 
+                                  subject, act_name, measurement_type)
+      
       ## save summary table to disk 
       write.table(summary_of_means, "summary_of_means.txt", 
                   row.names = FALSE)
