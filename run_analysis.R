@@ -5,16 +5,16 @@ run_analysis <- function() {
       loadpackages()
       
       measurements_train <- read.table("X_train.txt")
-      ## each row contain one instance of measurements for a particular
+      ## each row contains one instance of measurements for a particular
       ## subject
 
       subjects_train <- read.table("subject_train.txt")
-      # each element in data frame subjects_train is a number indentifying
-      # a subject establishing the link between subjects in the train 
-      # sets and sequences of measurements in measurements_train. 
-      # In particular, subjects_train[i] identifies the subject that
-      # the sequence of measurements in measurements_train[i,] corresponds
-      # to.
+      # each element in data frame subjects_train is a number 
+      # indentifying a subject establishing the link between subjects  
+      # in the train sets and sequences of measurements in  
+      # measurements_train. In particular, subjects_train[i] identifies 
+      # the subject that the sequence of measurements in 
+      # measurements_train[i,] corresponds to.
 
       activities_train <- read.table("y_train.txt")
       # each element in data frame activities_train contains a number
@@ -53,19 +53,24 @@ run_analysis <- function() {
       # to stds
       std_measurements_indexes <- grep("std\\(\\)", features)
       
-      # concanetate all target measurements' indexes into just one vector
-      measurements_indexes <- c(mean_measurements_indexes, std_measurements_indexes)
+      # concanetate all target measurements' indexes into just one 
+      # vector
+      measurements_indexes <- c(mean_measurements_indexes, 
+                                std_measurements_indexes)
       
-      # in measurements_train and in measurements_test, keep only the columns
-      # corresponding to targetted measurements
+      # in measurements_train and in measurements_test, keep only 
+      # the columns corresponding to targetted measurements
       measurements_train <- measurements_train[measurements_indexes]
       measurements_test <- measurements_test[measurements_indexes]
       
       # get all measurement names
-      target_measurement_names <- gsub("[^aA-zZ^-]", "", features[measurements_indexes])
-      target_measurement_names <- gsub("-", "_", target_measurement_names)
+      target_measurement_names <- gsub("[^aA-zZ^-]", "", 
+                                       features[measurements_indexes])
+      target_measurement_names <- gsub("-", "_", 
+                                       target_measurement_names)
 
-      ## append train datasets to corresponding test dataset (in that order)
+      ## append train datasets to corresponding test dataset (in 
+      ## that order)
       all_measurements <- rbind(measurements_train, measurements_test)
       all_subjects <- rbind(subjects_train, subject_test)
       all_activities <- rbind(activities_train, activities_test)
@@ -73,7 +78,8 @@ run_analysis <- function() {
       
       ## match each activity with its name in all_acitivites
       all_activities$rank <- 1:nrow(all_activities)
-      all_activities <- merge(all_activities, activity_labels, sort = FALSE)
+      all_activities <- merge(all_activities, activity_labels, 
+                              sort = FALSE)
       all_activities <- arrange(all_activities, rank)
       all_activities$rank <- NULL
       
@@ -82,18 +88,31 @@ run_analysis <- function() {
       names(all_subjects) <- "subject"
 
       ## build the final table
-      final_table <- data_frame(c(rep("train", nrow(measurements_train)), rep("test", nrow(measurements_test))))
-      names(final_table) <- "type_of_data"
+      final_table <- 
+            data_frame(c(rep("train", nrow(measurements_train)), 
+                         rep("test", nrow(measurements_test))))
+      names(final_table) <- "subject_group"
       final_table <- cbind(final_table, all_subjects)
       final_table$act_name <- all_activities$act_name
       final_table <- cbind(final_table, all_measurements)
       
-      final_table <- gather(final_table, "measure_name", "measure_value", 4:69)
+      final_table <- gather(final_table, "measurement_type", 
+                            "measurement_value", 4:69)
 
       final_table <- tbl_df(final_table)
-      gfinal_table <- group_by(final_table, type_of_data, subject, act_name, measure_name)
+      gfinal_table <- group_by(final_table, type_of_data, subject, 
+                               act_name, measurement_type)
 
+      ## extract the final tidy data set corresponding to the summary 
+      ## of mean values of each variable different type of measurement 
+      ## for each activity and each subject
+      summary_of_means <- 
+            dplyr::summarise(gfinal_table, 
+                             mean_value = mean(measure_value))
 
+      ## save summary table to disk 
+      write.table(summary_of_means, "summary_of_means.txt", 
+                  row.names = FALSE)
 
 
 }
@@ -107,30 +126,3 @@ loadpackages <- function() {
    library(tidyr)
 }
 
-get_seq_values_from <- function(measurements) { 
-      return (sapply(measurements, str_extract_all, 
-                     "\\-*\\d+\\.*\\d*(e[+,-]?\\d+)?"))
-}
-
-
-## no need for this
-indexvaluepair <- function(index, values) { 
-      df <- data_frame(Index = numeric(0), Value = numeric(0))
-      for (i in 1:length(v)) {
-            df[nrow(df)+1,] <- c(index, values[i])
-      }
-      return(df)
-}
-
-## no need... for this
-proces_activity_labels <- function(al) { 
-      df <- data_frame(a_index = character(0), a_name = character(0))
-      for (i in 1:length(al)) {
-            index <- str_extract(al[i], "[0-9]")
-            name <- str_extract(al[i], "[aA-zZ_]")
-            df[nrow(df)+1,] <- c(index, name)
-      }
-      df$a_index <- as.integer(df$a_index)
-      arrange(df, a_index)   ## just in case they are not sorted
-      return (df)
-}
