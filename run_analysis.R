@@ -1,3 +1,14 @@
+## This R script processes the dataset from:  
+##   Human Activity Recognition Using Smartphones DataSet
+##   Jorge L. Reyes-Ortiz, Davide Anguita, Alessandro Ghio, 
+##   and Luca Oneto
+##   DITEN - Universitá degli Studi di Genova
+##   https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles
+##           %2FUCI%20HAR%20Dataset.zip
+## 
+## Script for C3 Project - Data Science 
+## Generates a final table containing mean of measured values for 
+## a set of variables already in the data set. 
 
 run_analysis <- function() {
       
@@ -30,7 +41,7 @@ run_analysis <- function() {
       # is analogous to the description given above for the 
       # train vector with equal prefix name, respectively.  
       measurements_test <- read.table("X_test.txt")
-      subject_test <- read.table("subject_test.txt")
+      subjects_test <- read.table("subject_test.txt")
       activities_test <- read.table("y_test.txt")
 
       features <- readLines("features.txt")
@@ -46,11 +57,11 @@ run_analysis <- function() {
       # preprocess each vector read
       
       #exxtract the indexes of those measurements corresponding
-      # to means
+      # to means: those names containing "mean()" as a substring
       mean_measurements_indexes <- grep("mean\\(\\)", features)
       
       #exxtract the indexes of those measurements corresponding
-      # to stds
+      # to stds: those names containing "std()" as a substring
       std_measurements_indexes <- grep("std\\(\\)", features)
       
       # concanetate all target measurements' indexes into just one 
@@ -70,24 +81,48 @@ run_analysis <- function() {
                                        target_measurement_names)
 
       ## append train datasets to corresponding test dataset (in 
-      ## that order)
+      ## that order), creating new tables as described: 
+      
       all_measurements <- rbind(measurements_train, measurements_test)
-      all_subjects <- rbind(subjects_train, subject_test)
+      # table of all rows in measurements_train followed by all rows
+      # in measurements_test
+      
+      all_subjects <- rbind(subjects_train, subjects_test)
+      # table of all rows in subjects_train followed by all rows
+      # in subjects_test
+      
       all_activities <- rbind(activities_train, activities_test)
+      # table of all activities in activities_train followed by 
+      # all activities in activities_test
+      
+      ## give name to the column in all_acitivities table
       names(all_activities) <- "act_index"
       
-      ## match each activity with its name in all_acitivites
+      ## match each activity with its name in all_activities. 
+      ## Since the merge does not guarantee that the original
+      ## order of the tables is kept, I am introducing a rank
+      ## attribute to guarantee that the rows of the final table 
+      ## are in the same order as in the original all_activities
+      ## table. 
       all_activities$rank <- 1:nrow(all_activities)
       all_activities <- merge(all_activities, activity_labels, 
                               sort = FALSE)
-      all_activities <- arrange(all_activities, rank)
-      all_activities$rank <- NULL
+      all_activities <- arrange(all_activities, rank)  #sort back
+      all_activities$rank <- NULL  # remove the rank attribute
       
       ## properly name column names on each data frame
       names(all_measurements) <- target_measurement_names
       names(all_subjects) <- "subject"
 
-      ## build the final table
+      ## build the final table with columns: 
+      ##   subject_group - what group the subject belongs to
+      ##   subject - id number for the subject
+      ##   act_name - name of the activity being measured
+      ## followed by one column (culumns 4..69) for each one of 
+      ## the target measurements (66 columns in total). The values 
+      ## of these 66 columns are the measurement that was obtained 
+      ## for that variable in one of the intances when the given 
+      ## subject was performing the given activity.
       final_table <- 
             data_frame(c(rep("train", nrow(measurements_train)), 
                          rep("test", nrow(measurements_test))))
@@ -96,11 +131,27 @@ run_analysis <- function() {
       final_table$act_name <- all_activities$act_name
       final_table <- cbind(final_table, all_measurements)
       
+      ## Transfor the final table in one in which the 66 columns
+      ## corresponding to the target measurements are now inserted
+      ## as values. Hence, the final table will have 5 columns: 
+      ##  subject_group
+      ##  subject
+      ##  act_name
+      ##  measurement_type - describes the target measurement
+      ##  measurement_value - the value of the target measurement
       final_table <- gather(final_table, "measurement_type", 
                             "measurement_value", 4:69)
 
+      ## At this moment, each row of final_table has the 
+      ## the measurement value (measurement_value) that was
+      ## obtained for the particular measurement (measurement_type)
+      ## in one instance in which the particular subject (subject)
+      ## was performing the given activity (act_name). 
+      
+      ## Now group final_table the attributes subject_group, subject, 
+      ## act_name, measurement_type
       final_table <- tbl_df(final_table)
-      gfinal_table <- group_by(final_table, type_of_data, subject, 
+      gfinal_table <- group_by(final_table, subject_group, subject, 
                                act_name, measurement_type)
 
       ## extract the final tidy data set corresponding to the summary 
@@ -108,7 +159,7 @@ run_analysis <- function() {
       ## for each activity and each subject
       summary_of_means <- 
             dplyr::summarise(gfinal_table, 
-                             mean_value = mean(measure_value))
+                             mean_value = mean(measurement_value))
 
       ## save summary table to disk 
       write.table(summary_of_means, "summary_of_means.txt", 
