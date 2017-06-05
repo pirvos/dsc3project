@@ -52,7 +52,10 @@ measurements_test <- read.table("X_test.txt")
 subjects_test <- read.table("subject_test.txt")
 activities_test <- read.table("y_test.txt")
 
-features <- readLines("features.txt")
+features <- read.table("features.txt", stringsAsFactors = FALSE)
+names(features) <- c("index", "fname")
+features <- arrange(features, index)
+features <- features$fname
 # the features vector contains the name identifying what
 # features were measured. In particular, on each of the 
 # sequences in measuremts_train and in measurements_test
@@ -65,11 +68,12 @@ names(activity_labels) <- c("act_index", "act_name")
 ## -----------------------------------------------------------
 ## PREPROCESS EACH DATA FRAME THAT WAS READ ABOVE
 ## -----------------------------------------------------------
-## extract the indexes of those measurements corresponding
+## Start getting the target measurements.
+## Extract the indexes of those measurements corresponding
 ## to means: those names containing "mean()" as a substring
 mean_measurements_indexes <- grep("mean\\(\\)", features)
 
-## extract the indexes of those measurements corresponding
+## Extract the indexes of those measurements corresponding
 ## to stds: those names containing "std()" as a substring
 std_measurements_indexes <- grep("std\\(\\)", features)
 
@@ -83,11 +87,12 @@ measurements_indexes <- c(mean_measurements_indexes,
 measurements_train <- measurements_train[measurements_indexes]
 measurements_test <- measurements_test[measurements_indexes]
 
-## get all measurement names
+## get the names of the target measurements
 target_measurement_names <- gsub("[^aA-zZ^-]", "", 
                                  features[measurements_indexes])
 target_measurement_names <- gsub("-", "_", 
                                  target_measurement_names)
+
 
 ## -----------------------------------------------------------
 ## APPEND EACH CORRESPONDING TRAINING AND TEST DATASETS, IN 
