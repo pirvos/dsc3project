@@ -7,8 +7,9 @@
 ##           %2FUCI%20HAR%20Dataset.zip
 ## 
 ## Script for C3 Project - Data Science 
-## Generates a final table containing mean of measured values for 
-## a set of variables already in the data set. 
+## Generates a final table containing average of measured values for 
+## a set of variables already in the data set for each activity
+## and each subject. 
 
 
 ## -----------------------------------------------------------
@@ -143,7 +144,8 @@ names(final_table1)[2] <- "act_name"
 
 ## -----------------------------------------------------------
 ## COMPUTE AVERAGE FOR EACH ONE OF THE 66 VARIABLES FOR EACH
-## ACTIVITY AND EACH SUBJECT
+## ACTIVITY AND EACH SUBJECT - gather, group_by, summarise, 
+## arrange, and spread....
 ## -----------------------------------------------------------
 ## This can be easily done by the following steps: 
 ##  1. From final_table1, create a new temporary table in which 
@@ -181,6 +183,9 @@ final_table2 <- spread(summary_of_means, measurement_type, mean_value)
 ## -----------------------------------------------------------
 ## SAVE FINAL TIDY DATASET TO DISK
 ## -----------------------------------------------------------
+## rname the columns in final_table2 -- those for the measurements (3:68)
+names(final_table2)[3:68] <- paste("avg", target_measurement_names, sep="_")
+
 ## save summary table to disk 
 write.table(final_table2, "average_of_variables.txt", 
             row.names = FALSE)
