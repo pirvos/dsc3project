@@ -128,64 +128,60 @@ names(all_subjects) <- "subject"
 ## BUILD FINAL TABLES
 ## -----------------------------------------------------------
 ## build the final table with columns: 
-##   subject_group - what group the subject belongs to
 ##   subject - id number for the subject
 ##   act_name - name of the activity being measured
-## followed by one column (culumns 4..69) for each one of 
+## followed by one column (culumns 3..68) for each one of 
 ## the target measurements (66 columns in total). The values 
-## of these 66 columns are the measurement that was obtained 
-## for that variable in one of the intances when the given 
-## subject was performing the given activity.
-final_table <- 
-      data_frame(c(rep("train", nrow(measurements_train)), 
-                   rep("test", nrow(measurements_test))))
-names(final_table) <- "subject_group"
-final_table <- cbind(final_table, all_subjects)
-final_table$act_name <- all_activities$act_name
-final_table <- cbind(final_table, all_measurements)
+## for each one of these 66 columns are the measurement that 
+## were obtained for that particular measurement (variable)
+## in one of the intances when the given subject was performing 
+## the given activity.
+final_table1 <- cbind(all_subjects, all_activities$act_name)
+final_table1 <- cbind(final_table1, all_measurements)
+final_table1 <- tbl_df(final_table1)
+names(final_table1)[2] <- "act_name"
 
-## Transfor the final table in one in which the 66 columns
-## corresponding to the target measurements are now inserted
-## as values. Hence, the final table will have 5 columns: 
-##  subject_group
-##  subject
-##  act_name
-##  measurement_type - describes the target measurement
-##  measurement_value - the value of the target measurement
-final_table <- gather(final_table, "measurement_type", 
-                      "measurement_value", 4:69)
+## -----------------------------------------------------------
+## COMPUTE AVERAGE FOR EACH ONE OF THE 66 VARIABLES FOR EACH
+## ACTIVITY AND EACH SUBJECT
+## -----------------------------------------------------------
+## This can be easily done by the following steps: 
+##  1. From final_table1, create a new temporary table in which 
+##     the 66 variables corresponding to the target measurements  
+##     are now inserted as values. Hence, the final table will 
+##     have 5 columns: 
+##        subject_group
+##        subject
+##        act_name
+##        measurement_type - describes the target measurement
+##        measurement_value - the value of the target measurement
+temp_table <- gather(final_table1, measurement_type, 
+                      measurement_value, 3:68)
 
-## At this moment, each row of final_table has the 
-## the measurement value (measurement_value) that was
-## obtained for the particular measurement (measurement_type)
-## in one instance in which the particular subject (subject)
-## was performing the given activity (act_name). 
-
-## Now group final_table the attributes subject_group, subject, 
-## act_name, measurement_type
-final_table <- tbl_df(final_table)
-gfinal_table <- group_by(final_table, subject_group, subject, 
+##  2. Group the tempporary table by subject, act_name, 
+##     and measurement_type.
+temp_table <- tbl_df(temp_table)
+gtemp_table <- group_by(temp_table, subject, 
                          act_name, measurement_type)
 
-## -----------------------------------------------------------
-## GENERATE THE FINAL TIDY DATASET WITH THE AVERAGE OF EACH 
-## TARGET VARIABLE FOR EACH ACTIVITY AND EACH SUBJECT
-## -----------------------------------------------------------
-## extract the final tidy data set corresponding to the summary 
-## of mean values of each variable different type of measurement 
-## for each activity and each subject
+##  3. Apply summarize to the temporary table computing the
+##     mean value of each measurement per group
 summary_of_means <- 
-      dplyr::summarise(gfinal_table, 
+      dplyr::summarise(gtemp_table, 
                        mean_value = mean(measurement_value))
 
-## sort the previous table by subject, act_name, measumrement_type
+##  4. Sort the previous table by subject, act_name, measumrement_type
 summary_of_means <- arrange(summary_of_means, 
                             subject, act_name, measurement_type)
+
+##  5. Spread the content of sumary_or_means back as a table of 68 
+##     columns in which the value for each target variable is now the mean
+final_table2 <- spread(summary_of_means, measurement_type, mean_value)
 
 ## -----------------------------------------------------------
 ## SAVE FINAL TIDY DATASET TO DISK
 ## -----------------------------------------------------------
 ## save summary table to disk 
-write.table(summary_of_means, "summary_of_means.txt", 
+write.table(final_table2, "average_of_variables.txt", 
             row.names = FALSE)
 
