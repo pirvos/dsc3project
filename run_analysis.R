@@ -71,25 +71,26 @@ names(activity_labels) <- c("act_index", "act_name")
 ## Start getting the target measurements.
 ## Extract the indexes of those measurements corresponding
 ## to means: those names containing "mean()" as a substring
-mean_measurements_indexes <- grep("mean\\(\\)", features)
+target_mean_measurements_indexes <- grep("mean\\(\\)", features)
 
 ## Extract the indexes of those measurements corresponding
 ## to stds: those names containing "std()" as a substring
-std_measurements_indexes <- grep("std\\(\\)", features)
+target_std_measurements_indexes <- grep("std\\(\\)", features)
 
 ## concanetate all target measurements' indexes into just one 
 ## vector
-measurements_indexes <- c(mean_measurements_indexes, 
-                          std_measurements_indexes)
+target_measurements_indexes <- c(target_mean_measurements_indexes, 
+                          target_std_measurements_indexes)
 
-## in measurements_train and in measurements_test, keep only 
-## the columns corresponding to targetted measurements
-measurements_train <- measurements_train[measurements_indexes]
-measurements_test <- measurements_test[measurements_indexes]
+## in measurements_train and in measurements_test, KEEP ONLY 
+## the COLUMNS CORRESPONDING TO THE TARGET MEASUREMENTS
+measurements_train <- measurements_train[target_measurements_indexes]
+measurements_test <- measurements_test[target_measurements_indexes]
 
 ## get the names of the target measurements
 target_measurement_names <- gsub("[^aA-zZ^-]", "", 
-                                 features[measurements_indexes])
+                                 features[target_measurements_indexes])
+## raplace '-' by '_' in each of the target names
 target_measurement_names <- gsub("-", "_", 
                                  target_measurement_names)
 
@@ -178,8 +179,8 @@ summary_of_means <-
                        mean_value = mean(measurement_value))
 
 ##  4. Sort the previous table by subject, act_name, measumrement_type
-summary_of_means <- arrange(summary_of_means, 
-                            subject, act_name, measurement_type)
+#summary_of_means <- arrange(summary_of_means, 
+#                            subject, act_name, measurement_type)
 
 ##  5. Spread the content of sumary_or_means back as a table of 68 
 ##     columns in which the value for each target variable is now the mean
@@ -188,8 +189,8 @@ final_table2 <- spread(summary_of_means, measurement_type, mean_value)
 ## -----------------------------------------------------------
 ## SAVE FINAL TIDY DATASET TO DISK
 ## -----------------------------------------------------------
-## rname the columns in final_table2 -- those for the measurements (3:68)
-names(final_table2)[3:68] <- paste("avg", target_measurement_names, sep="_")
+## rename the columns in final_table2 -- those for the measurements (3:68)
+names(final_table2)[3:68] <- paste("avg", names(final_table2[3:68]), sep="_")
 
 ## save summary table to disk 
 write.table(final_table2, "average_of_variables.txt", 
