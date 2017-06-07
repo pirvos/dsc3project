@@ -16,8 +16,8 @@
 ## LOAD NEEDED PACKAGES
 ## -----------------------------------------------------------
 library(stringr)
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(tidyr)
 
 ## -----------------------------------------------------------
@@ -128,7 +128,11 @@ all_activities <- arrange(all_activities, rank)  #sort back
 all_activities$rank <- NULL  # remove the rank attribute
 
 ## properly name column names on each data frame
-names(all_measurements) <- target_measurement_names
+##names(all_measurements) <- target_measurement_names
+
+## the following dummy names are assigned to guarantee order
+## of columns in the operations that follow...
+names(all_measurements) <- paste('a', 101:166, sep = "")
 names(all_subjects) <- "subject"
 
 ## -----------------------------------------------------------
@@ -178,21 +182,22 @@ summary_of_means <-
       dplyr::summarise(gtemp_table, 
                        mean_value = mean(measurement_value))
 
-##  4. Sort the previous table by subject, act_name, measumrement_type
-#summary_of_means <- arrange(summary_of_means, 
-#                            subject, act_name, measurement_type)
-
-##  5. Spread the content of sumary_or_means back as a table of 68 
+##  4. Spread the content of sumary_or_means back as a table of 68 
 ##     columns in which the value for each target variable is now the mean
 final_table2 <- spread(summary_of_means, measurement_type, mean_value)
 
 ## -----------------------------------------------------------
 ## SAVE FINAL TIDY DATASET TO DISK
 ## -----------------------------------------------------------
-## rename the columns in final_table2 -- those for the measurements (3:68)
-names(final_table2)[3:68] <- paste("avg", names(final_table2[3:68]), sep="_")
+## rename the columns in final_table1 and final_table2 
+##           -- those for the measurements (3:68)
+names(final_table1)[3:68] <- target_measurement_names
+names(final_table2)[3:68] <- paste("avg", target_measurement_names, sep="_")
 
 ## save summary table to disk 
 write.table(final_table2, "average_of_variables.txt", 
             row.names = FALSE)
+
+## remove created objects except final_table1 and final_table2
+rm (list = ls()[!grepl("final", ls())])
 
