@@ -6,7 +6,7 @@ Human Activity Recognition Using Smartphones DataSet
 ## General Description of the Source Data
 
 
-** Generalities
+# Generalities
 The original data sets whose processing results in the data sets to be described here como from above site.  These data sets contain the observations of experiments that consisted of reading smartphone sensor data as an individual was performing one of six possible activities. A total of 30 individuals participated in the experimentations, which were randomly partitioned in two sets: the training set and the test set. At each instance of the experiments several measurements were collected, each consisting of sensor values for 128 different variables. From each sequence of the 128 values measured on a particular instance, after proper processing, a sequence of 561 new values was obtained. These 561 measurements corresponding to each instance of the experimentations represent the core of these data sets. The data of interest is distributed among several files as described next. 
 
 
@@ -47,6 +47,7 @@ All the above files are used as input in R script named “run_analysis.R”. Th
 
 These measurements correspond to mean and standard deviation values that were determined for other measurements at instances of the experimentations. Hence this first table has 7352 rows and 68 columns, where columns 3:68 respective correspond to the the measurements listed above. They all correspond to real number values representing the measured number of units for the particular measurement that each corresponds to. 
 
+#Description of Data Sets Being Generated
 The following two tables are generated: 
 * final_table1 - this table is left at the workspace of the R session once the script ends execution. 
 * final_table2 - this table is included as part of this repo. It is generated from the data in final_table1. In particular, it contains the average value of each one of the variables corresponding to measurements stored in final_table1, for each activity and each subject. Since there are 6 possible activities, and 30 subjects, and each of the subjects performed all the six activities at one point, then this file contains 30x6=180 rows and 68 columns. Their particular descriptions is given in more details next. The content of this table is saved in file “average_of_variables.txt”, which is included as part of this repo. 
@@ -54,7 +55,7 @@ The following two tables are generated:
 
 Table: final_table1. The final names of each one of the columns in this table are: 
 1. subject      : its values are single integer numbers in the range from 1 to 30, each identifying the subject  that participated in the experimentation instance for which the other data in the particular row corresponds to.  
-2. act_name   : its values are strings representing the name of the activity that was being performed at the moment of the particular experimentation instance that the particular row in the table corresponds to.          
+2. act_name   : its values are strings representing the name of the activity that was being performed at the moment of the particular experimentation instance that the particular row in the table corresponds to. The possible values are: “WAKING”, “WALKING_UPSTAIRS”, “WALKING_DOWNSTAIRS”, “SITTING”, “STANDING”, and “LAYING”.        
 3. tBodyAcc_mean_X : its values are the values of            tBodyAcc-mean()-X from the original data at the particular instance of the experimentation that the row corresponds to. Units: standard gravity units g.
 4. tBodyAcc_mean_Y : its values are the values of            tBodyAcc-mean()-Y from the original data at the particular instance of the experimentation that the row corresponds to.  Units: standard gravity units g.
 5. tBodyAcc_mean_Z : its values are the values of            tBodyAcc-mean()-Z from the original data at the particular instance of the experimentation that the row corresponds to. Units: standard gravity units g.
@@ -124,8 +125,11 @@ Table: final_table1. The final names of each one of the columns in this table ar
 
 
 
-Table: final_table2. The columns, as well as their particular names are the same as in final_table1, except that for those corresponding to measurements (columns 3:68) the prefix “avg_” has been added to each name that that column has in final_table1. Each row in this table contains the subject, a particular activity, and the average values of all que measurements that were collected (and part of final_table1) for that particular individual performing that particular activity. The table contains 180 columns and 68 columns. 
+Table: final_table2. The first column is the subject, an integer value in range 1..30. Each one of these values identify a participant in the experimentations. The second column is act_name, whose possible values are the names of the activities (“WAKING”, “WALKING_UPSTAIRS”, “WALKING_DOWNSTAIRS”, “SITTING”, “STANDING”, “LAYING”). Columns 3 to 68 correspond to average of all the values in the same column in final_table1 that were measured for the particular subject in col 1 while performing the particular activity in col 2. The name of each one of these columns is the same name as the corresponding column in final_table1 but having the prefix “avg_” added (so, if the i-th column in final_table1 has name x, then the i-th column in final_table2 has name avg_x, for i=3…64).
 
+Each row in this table contains the subject (value 1..30), a particular activity (one of the six given strings), and the average values of all que measurements that were collected (and part of final_table1) for that particular individual performing that particular activity. Measurements on each column have the same unit as those in the same cooling in final_table1. The table final_table2 contains 180 columns and 68 columns. 
+
+This table is included in this repo as the content of the file “average_of_variables.txt”.
 
 
 

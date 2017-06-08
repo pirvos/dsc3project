@@ -12,6 +12,7 @@
 ## and each subject. 
 
 
+run_analysis <- function() {
 ## -----------------------------------------------------------
 ## LOAD NEEDED PACKAGES
 ## -----------------------------------------------------------
@@ -183,7 +184,8 @@ summary_of_means <-
                        mean_value = mean(measurement_value))
 
 ##  4. Spread the content of sumary_or_means back as a table of 68 
-##     columns in which the value for each target variable is now the mean
+##     columns in which the value for each target variable is now 
+##     the mean
 final_table2 <- spread(summary_of_means, measurement_type, mean_value)
 
 ## -----------------------------------------------------------
@@ -192,12 +194,14 @@ final_table2 <- spread(summary_of_means, measurement_type, mean_value)
 ## rename the columns in final_table1 and final_table2 
 ##           -- those for the measurements (3:68)
 names(final_table1)[3:68] <- target_measurement_names
-names(final_table2)[3:68] <- paste("avg", target_measurement_names, sep="_")
+names(final_table2)[3:68] <- 
+      paste("avg", target_measurement_names, sep="_")
 
 ## save summary table to disk 
 write.table(final_table2, "average_of_variables.txt", 
             row.names = FALSE)
 
-## remove created objects except final_table1 and final_table2
+## remove created objects except final_table1 and 
+## final_table2
 rm (list = ls()[!grepl("final", ls())])
-
+}
