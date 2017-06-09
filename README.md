@@ -106,14 +106,16 @@ in data frame: target_measurements_indexes.
 
 8. Build table final_table1 whose columns and content are the columns in all_subjects, followed by the column under “act_name” in all_activities, followed by columns in all_measurements. The name of column 2 of this table is set to “act_name”. 
 
-9. Compute the average for each of the 66 variables for each activity and each subject. This is as follows: 
+9. Compute the average for each of the 66 variables for each activity and each subject. This is as 
+follows: 
 
    * From final_table1, create a new temporary table in which the 66 variables corresponding to the target measurements are now inserted as values. This is done by the following: 
      
        temp_table <- gather(final_table1, measurement_type, 
                            measurement_value, 3:68)
 
-Hence temp_table has 4 columns: subject, act_name, measurement_type, and measurement_value. This table contains one row for each combination of subject, activity, and measurement value. That is, from each line in final_table1, there are 66 rows in temp_table.   
+    * Table temp_table has 4 columns: subject, act_name, measurement_type, and measurement_value. 
+This table contains one row for each combination of subject, activity, and measurement value. That is, from each line in final_table1, there are 66 rows in temp_table.   
     
     * Group the temporary table by subject, act_name, and measurement_type. This is done by first converting temp_table to a table: temp_table <- tbl_df(temp_table). Then, group temp_table by columns “subject”, “act_name”, and “measurement_type”. The grouped version is placed in new table “gtemp_table”. 
 
