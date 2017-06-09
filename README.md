@@ -107,11 +107,14 @@ in data frame: target_measurements_indexes.
 8. Build table final_table1 whose columns and content are the columns in all_subjects, followed by the column under “act_name” in all_activities, followed by columns in all_measurements. The name of column 2 of this table is set to “act_name”. 
 
 9. Compute the average for each of the 66 variables for each activity and each subject. This is as follows: 
-* From final_table1, create a new temporary table in which the 66 variables corresponding to the target measurements are now inserted as values. This is done by the following: 
+
+   * From final_table1, create a new temporary table in which the 66 variables corresponding to the target measurements are now inserted as values. This is done by the following: 
      
        temp_table <- gather(final_table1, measurement_type, 
                            measurement_value, 3:68)
-Hence temp_table has 4 columns: subject, act_name, measurement_type, and measurement_value. This table contains one row for each combination of subject, activity, and measurement value. That is, from each line in final_table1, there are 66 rows in temp_table.       
+
+Hence temp_table has 4 columns: subject, act_name, measurement_type, and measurement_value. This table contains one row for each combination of subject, activity, and measurement value. That is, from each line in final_table1, there are 66 rows in temp_table.   
+    
     * Group the temporary table by subject, act_name, and measurement_type. This is done by first converting temp_table to a table: temp_table <- tbl_df(temp_table). Then, group temp_table by columns “subject”, “act_name”, and “measurement_type”. The grouped version is placed in new table “gtemp_table”. 
 
     * Summarise the gtemp_table by computing the mean of the measurement_value in each group, and place the results in new data frame summary_of_means. This is done by executing 
@@ -122,11 +125,11 @@ Hence temp_table has 4 columns: subject, act_name, measurement_type, and measure
 
 Hence, row i of summary_of_means contain one subject, one activity, one measurement type, and the value corresponding to the average of all measurements that we recorded on the particular activity while the particular subject was performing the particular activity. 
 
-    * Convert back the content of the table summary_of_means to a table with the same format as   final_table1. This new table is named final_table2. Each row in final_table2 has 68 columns as final_table1. However, in value stored in final_table2[i, j] is now the average value of all those values in column final_table1[, j] in rows having subject = final_table1[i, 1] and act_name = final_table1[i, 2]. This is done by executing: 
+   * Convert back the content of the table summary_of_means to a table with the same format as   final_table1. This new table is named final_table2. Each row in final_table2 has 68 columns as final_table1. However, in value stored in final_table2[i, j] is now the average value of all those values in column final_table1[, j] in rows having subject = final_table1[i, 1] and act_name = final_table1[i, 2]. This is done by executing: 
 
       final_table2 <- spread(summary_of_means, measurement_type, mean_value)
       
-    * Rename columns 3:68 to have the same names as their respective column in final_table1, but adding prefix “avg_” to each one of them. 
+  * Rename columns 3:68 to have the same names as their respective column in final_table1, but adding prefix “avg_” to each one of them. 
 
 10. The content of table final_table2 are written to text file: “average_of_variables.txt” in the working directory. 
 11. At the end of execution, the work space of left with only two objects: final_table1 and final_table2. 
