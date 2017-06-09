@@ -18,22 +18,29 @@ Once loaded, the execution is initiated by typing ‘run_analysis()’.
 
 ## Input 
 All the input comes from text files; which are read from the current working directory. The input files, as well as the internal objects where their contents are read are described next. 
- 
-    * file X_train.txt - each line contains a sequence of 561 measurements corresponding to the different variables
+
+* file X_train.txt - each line contains a sequence of 561 measurements corresponding to the different variables
 whose values are produced by the observations measured at each instance of the experiments. Data in this file corresponds to subjects in the training group only. 
-    * file subject_train.txt - each line contains one integer number identifying one of the 30 subjects. The 
+
+* file subject_train.txt - each line contains one integer number identifying one of the 30 subjects. The 
 subject in line i of this file is the subject who was the actor at the experimentation instance that the values in line i of file X_train.txt corresponds to. Data in this file corresponds to subjects in the training group only.  
-    * file y_train.txt - each line contains one integer number identifying one of the activities. The 
+
+* file y_train.txt - each line contains one integer number identifying one of the activities. The 
 activity in line i of this file is the activity that was being performed at the experimentation instance that the values in line i of file X_train.txt corresponds to. 
-    * file X_test.txt - Description is analogous to that of X_train.txt, but for subjects in the test
+
+* file X_test.txt - Description is analogous to that of X_train.txt, but for subjects in the test
 group. 
-    * file subject_test.txt - Description is analogous to 
+
+* file subject_test.txt - Description is analogous to 
 that of subject_train.txt, but for subjects in the test group.
-    * file y_test.txt - Description is 
+
+* file y_test.txt - Description is 
 analogous to that of y_train.txt, but for subjects in the test group.
-    * file features.txt into the data frame features - each row contains the descriptive name of each of the features that were measured 
+
+* file features.txt into the data frame features - each row contains the descriptive name of each of the features that were measured 
 from the data collected at each instance of the experimentations. Feature in line i is the feature whose values are stored as the i-th element in each line of files X_train.txt and X_test.txt. 
-    * file activity_labels.txt Each row contains the id of the activity, as well as its descriptive name. 
+
+* file activity_labels.txt Each row contains the id of the activity, as well as its descriptive name. 
  
 
 
