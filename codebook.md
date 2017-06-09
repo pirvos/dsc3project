@@ -126,7 +126,9 @@ The following two tables are generated:
 
 
 
-### Table 2: final_table2. This table has one column for each column in final_table1. They are as follows.
+### Table 2: final_table2. This table has one column for each column in final_table1. 
+
+It contains the average values for each one of the measurements in final_table1 corresponding to a particular subject performing a particular activity. In particular, 
 * The first column is the subject, an integer value in range 1..30. Each one of these values identify a participant in the experimentations. 
 * The second column is act_name, whose possible values are the names of the activities (“WAKING”, “WALKING_UPSTAIRS”, “WALKING_DOWNSTAIRS”, “SITTING”, “STANDING”, “LAYING”). 
 * In each row of this table, the values in columns 3 to 68 correspond to average of all the values in the same column in final_table1 that were measured for the particular subject in col 1 while performing the particular activity in col 2. 
