@@ -123,7 +123,7 @@ Hence temp_table has 4 columns: subject, act_name, measurement_type, and measure
             dplyr::summarise(gtemp_table, 
                              mean_value = mean(measurement_value))
 
-Hence, row i of summary_of_means contain one subject, one activity, one measurement type, and the value corresponding to the average of all measurements that we recorded on the particular activity while the particular subject was performing the particular activity. 
+   * Row i of summary_of_means contain one subject, one activity, one measurement type, and the value corresponding to the average of all measurements that we recorded on the particular activity while the particular subject was performing the particular activity. 
 
    * Convert back the content of the table summary_of_means to a table with the same format as   final_table1. This new table is named final_table2. Each row in final_table2 has 68 columns as final_table1. However, in value stored in final_table2[i, j] is now the average value of all those values in column final_table1[, j] in rows having subject = final_table1[i, 1] and act_name = final_table1[i, 2]. This is done by executing: 
 
