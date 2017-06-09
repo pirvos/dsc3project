@@ -131,9 +131,8 @@ This table contains one row for each combination of subject, activity, and measu
 
       final_table2 <- spread(summary_of_means, measurement_type, mean_value)
       
-  * Rename columns 3:68 to have the same names as their respective column in final_table1, but adding prefix “avg_” to each one of them. 
-
-10. The content of table final_table2 are written to text file: “average_of_variables.txt” in the working directory. 
-11. At the end of execution, the work space of left with only two objects: final_table1 and final_table2. 
+10. Rename columns 3:68 to have the same names as their respective column in final_table1, but adding prefix “avg_” to each one of them. 
+11. The content of table final_table2 are written to text file: “average_of_variables.txt” in the working directory. 
+12. At the end of execution, the work space of left with only two objects: final_table1 and final_table2. 
 
 
